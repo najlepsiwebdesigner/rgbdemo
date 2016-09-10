@@ -60,6 +60,10 @@ bool ModelAcquisitionController :: newFrameThread(const ntk::RGBDImage* image)
   if (!pose_ok)
     return false;
   m_modeler.addNewView(*image, m_pose_estimator->currentPose());
+
+  std::cout << "here the pose is estimated " << std::endl;
+  std::cout << m_pose_estimator->currentPose().cvCameraTransformd() << std::endl;
+
   m_modeler.computeMesh();
   return true;
 }
@@ -86,6 +90,13 @@ void ModelAcquisitionController :: newFrame(const ntk::RGBDImage& image)
       if (m_new_frame_run.result())
       {        
         m_controller.modelAcquisitionWindow()->ui->mesh_view->addMesh(m_modeler.currentMesh(), Pose3D(), MeshViewer::FLAT);
+
+        std::cout << "new mesh adding! " << std::endl;
+        //std::cout << "Pose 3D: " << m_pose_estimator->currentPose().cvCameraTransform() << std::endl;
+
+        //Pose3D().savetoYaml("output.yaml");
+        m_modeler.currentMesh().saveToPlyFile("output.ply");
+
         m_controller.modelAcquisitionWindow()->ui->mesh_view->swapScene();
       }
     }
